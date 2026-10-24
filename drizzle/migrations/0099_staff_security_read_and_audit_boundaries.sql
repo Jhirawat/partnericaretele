@@ -1,0 +1,17 @@
+CREATE OR REPLACE FUNCTION public.staff_access_check(_scope text) RETURNS text LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DECLARE allowed boolean; BEGIN
+ IF auth.uid() IS NULL THEN RETURN 'DENIED'; END IF;
+ IF _scope IS NULL OR _scope NOT IN ('staff','super') THEN RAISE EXCEPTION 'INVALID_STAFF_SCOPE'; END IF;
+ allowed:=CASE WHEN _scope='super' THEN public.care_super(auth.uid()) ELSE EXISTS(SELECT 1 FROM public.user_roles WHERE user_id=auth.uid() AND status='ACTIVE' AND ((role='OPERATIONS_ADMIN') OR (partner_id IS NULL AND role IN ('SUPER_ADMIN','FINANCE_ADMIN','COMPLIANCE_AUDITOR')))) END;
+ IF NOT allowed THEN PERFORM public.staff_security_audit('STAFF_ACCESS_DENIED','DENIED'); RETURN 'DENIED'; END IF;
+ IF EXISTS(SELECT 1 FROM public.staff_security_state WHERE user_id=auth.uid() AND reset_required) THEN PERFORM public.staff_security_audit('STAFF_RESET_REQUIRED','RESET_REQUIRED'); RETURN 'RESET_REQUIRED'; END IF;
+ IF coalesce(auth.jwt()->>'aal','aal1')<>'aal2' THEN PERFORM public.staff_security_audit('STAFF_MFA_REQUIRED','MFA_REQUIRED'); RETURN 'MFA_REQUIRED'; END IF;
+ RETURN 'ALLOWED'; END $$;
+CREATE OR REPLACE FUNCTION public.site_settings_read(_scope text) RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=public AS $$ BEGIN
+ IF _scope IS NULL OR _scope NOT IN ('admin','doctor','customer','manage') OR (_scope='manage' AND (NOT public.care_super(auth.uid()) OR coalesce(auth.jwt()->>'aal','aal1')<>'aal2' OR EXISTS(SELECT 1 FROM public.staff_security_state WHERE user_id=auth.uid() AND reset_required))) OR (_scope<>'manage' AND NOT public.site_settings_scope(_scope)) THEN RAISE EXCEPTION 'SETTING_SCOPE_REQUIRED'; END IF;
+ RETURN jsonb_build_object('settings',coalesce((SELECT jsonb_object_agg(key,jsonb_build_object('value',value,'revision',revision)) FROM public.platform_settings WHERE key='site_name' OR (_scope='manage' AND key IN ('theme_admin','theme_doctor','theme_customer')) OR key='theme_'||_scope),'{}'::jsonb),'history',CASE WHEN _scope='manage' THEN coalesce((SELECT jsonb_agg(h) FROM (SELECT setting_key,revision,value,created_at FROM public.platform_settings_history ORDER BY created_at DESC,id DESC LIMIT 100) h),'[]'::jsonb) ELSE '[]'::jsonb END); END $$;
+CREATE POLICY settings_history_strong_read ON public.platform_settings_history AS RESTRICTIVE FOR SELECT TO authenticated USING(public.care_super(auth.uid()) AND auth.jwt()->>'aal'='aal2' AND NOT EXISTS(SELECT 1 FROM public.staff_security_state WHERE user_id=auth.uid() AND reset_required));
+CREATE OR REPLACE FUNCTION public.platform_security_capture() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ BEGIN
+ INSERT INTO public.audit_log(actor_user_id,action,entity_type,metadata) VALUES(auth.uid(),'PLATFORM_SECURITY_SETTING_CHANGED','platform_setting',jsonb_build_object('operation',TG_OP,'scope','SUPERADMIN'));
+ RETURN CASE WHEN TG_OP='DELETE' THEN OLD ELSE NEW END; END $$;
+CREATE TRIGGER platform_security_capture AFTER INSERT OR UPDATE OR DELETE ON public.platform_settings FOR EACH ROW EXECUTE FUNCTION public.platform_security_capture();
+REVOKE ALL ON FUNCTION public.platform_security_capture() FROM PUBLIC,anon,authenticated;

@@ -1,0 +1,3 @@
+-- PostgreSQL regex uses \M (end of word), not \b (backspace); tighten dump/script detection.
+CREATE OR REPLACE FUNCTION public.backup_unsafe(_t text) RETURNS boolean LANGUAGE sql IMMUTABLE SET search_path=public AS $$ SELECT public.release_unsafe_text(coalesce(_t,'')) OR coalesce(_t,'') ~* '(storage|bucket|s3|gs)://|pg_dump|insert\s+into|create\s+table|copy\s+\w+|\.sql\M|\.dump\M|password|secret|apikey|api_key' $$;
+REVOKE ALL ON FUNCTION public.backup_unsafe(text) FROM PUBLIC,anon,authenticated;

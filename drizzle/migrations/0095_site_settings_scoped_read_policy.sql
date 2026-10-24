@@ -1,0 +1,4 @@
+DROP POLICY branding_write_restriction ON public.platform_settings;
+CREATE POLICY branding_insert_restriction ON public.platform_settings AS RESTRICTIVE FOR INSERT TO authenticated WITH CHECK(key NOT IN ('site_name','theme_admin','theme_doctor') OR public.care_super(auth.uid()));
+CREATE POLICY branding_update_restriction ON public.platform_settings AS RESTRICTIVE FOR UPDATE TO authenticated USING(key NOT IN ('site_name','theme_admin','theme_doctor') OR public.care_super(auth.uid())) WITH CHECK(key NOT IN ('site_name','theme_admin','theme_doctor') OR public.care_super(auth.uid()));
+CREATE POLICY branding_delete_restriction ON public.platform_settings AS RESTRICTIVE FOR DELETE TO authenticated USING(key NOT IN ('site_name','theme_admin','theme_doctor') OR public.care_super(auth.uid()));

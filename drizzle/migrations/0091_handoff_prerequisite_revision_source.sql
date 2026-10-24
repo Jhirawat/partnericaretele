@@ -1,0 +1,1 @@
+DO $$ DECLARE definition text; BEGIN SELECT pg_get_functiondef('public.review_handoff_state()'::regprocedure) INTO definition; definition:=replace(definition,'coalesce((SELECT max(version) FROM production_prereq_record WHERE false),0)','coalesce((SELECT max(version) FROM test_prerequisites WHERE prerequisite_key=p),0)'); EXECUTE definition; END $$;

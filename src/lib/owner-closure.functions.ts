@@ -1,0 +1,7 @@
+import { createServerFn } from '@tanstack/react-start';
+import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { rowsSchema, recordSchema, confirmSchema } from './owner-closure';
+const fail=(m:string)=>new Error(['MFA','STALE_VERSION','SECOND_REVIEWER_REQUIRED','RELEASE_SCOPE_REQUIRED','INVALID_ARGUMENTS','DUPLICATE_CLOSURE','MISSING_EVIDENCE','DEPENDENCY_OPEN'].find(k=>m.includes(k))??'CLOSURE_ACTION_DENIED');
+export const readOwnerClosure=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).handler(async({context})=>{const {data,error}=await context.supabase.rpc('owner_closure_console' as never);if(error)throw fail(error.message);return rowsSchema.parse(data);});
+export const recordOwnerClosure=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((v:unknown)=>recordSchema.parse(v)).handler(async({data:d,context})=>{const {error}=await context.supabase.rpc('owner_closure_record_version' as never,{_key:d.key,_version:d.version,_status:d.status,_reason:d.reason,_next:d.next,_evidence:d.evidence} as never);if(error)throw fail(error.message);return {recorded:true};});
+export const confirmOwnerClosure=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((v:unknown)=>confirmSchema.parse(v)).handler(async({data:d,context})=>{const {error}=await context.supabase.rpc('owner_closure_confirm' as never,{_id:d.id,_outcome:d.outcome} as never);if(error)throw fail(error.message);return {recorded:true};});

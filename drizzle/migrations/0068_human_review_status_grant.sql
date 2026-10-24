@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.human_review_status(integer) TO authenticated;

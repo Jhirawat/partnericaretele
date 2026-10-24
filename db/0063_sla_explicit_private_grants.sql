@@ -1,0 +1,3 @@
+REVOKE ALL ON public.operational_sla_policies,public.operational_sla_cases,public.operational_sla_timeline,public.operational_sla_operations,public.operational_maintenance,public.operational_health_checks FROM PUBLIC,anon,authenticated;
+GRANT SELECT ON public.operational_sla_policies,public.operational_sla_cases,public.operational_sla_timeline,public.operational_maintenance TO authenticated;
+GRANT ALL ON public.operational_sla_policies,public.operational_sla_cases,public.operational_sla_timeline,public.operational_sla_operations,public.operational_maintenance,public.operational_health_checks TO service_role;

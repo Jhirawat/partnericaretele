@@ -1,0 +1,5 @@
+import { requireStaffRoute } from '@/lib/staff-route-guard';
+import {createFileRoute} from '@tanstack/react-router';
+import {SlaConsole,slaOptions} from '@/components/SlaConsole';
+import {ConsoleError} from '@/components/OperationsConsole';
+export const Route=createFileRoute('/_authenticated/system-health')({beforeLoad:()=>requireStaffRoute('super'),staticData:{sitemap:false},loader:({context})=>context.queryClient.ensureQueryData(slaOptions('health')),errorComponent:ConsoleError,head:()=>({meta:[{name:'robots',content:'noindex, nofollow'},{title:'System health — iCareTele'},{name:'description',content:'Private observed policy, storage and disabled-provider health.'},{property:'og:title',content:'System health — iCareTele'},{property:'og:description',content:'Observed operational safety evidence without secrets.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'}]}),component:()=> <SlaConsole mode="health"/>});

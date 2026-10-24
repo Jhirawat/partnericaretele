@@ -1,0 +1,706 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790079329602,
+      "tag": "0000_partnercare_phase1_foundation",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790079816969,
+      "tag": "0001_bootstrap_first_super_admin",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790083265508,
+      "tag": "0002_consultation_notes_and_partner_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790089391854,
+      "tag": "0003_phase2_4_mcs_credits_notifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790089420617,
+      "tag": "0004_consultation_mcs_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790178280832,
+      "tag": "0005_harden_credit_function",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790210223949,
+      "tag": "0006_fix_consultation_notes_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790211909633,
+      "tag": "0007_claim_patient_record_function",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790212045736,
+      "tag": "0008_wellness_role_and_type_extensions",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790212081551,
+      "tag": "0009_wellness_locations_rooms_resources",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790212112622,
+      "tag": "0010_wellness_services_and_prices",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790212155873,
+      "tag": "0011_wellness_therapists",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790212200334,
+      "tag": "0012_wellness_bookings",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790212241659,
+      "tag": "0013_wellness_payments_and_ledger",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1790212280096,
+      "tag": "0014_wellness_commission_and_audit_location",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1790212321864,
+      "tag": "0015_booking_payment_posting_function",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1790214400254,
+      "tag": "0016_refunds_check_and_patient_portal_function",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1790216879019,
+      "tag": "0017_clinic_os_phase1_mode_doctors_consent",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1790504746833,
+      "tag": "0018_harden_claim_patient_record_matching",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790566348784,
+      "tag": "0019_grant_record_booking_payment_execute",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1790830240412,
+      "tag": "0020_stripe_subscriptions",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1791060000000,
+      "tag": "0021_care_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1791060000001,
+      "tag": "0022_care_transactions",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791060000002,
+      "tag": "0023_care_access_and_rewards",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791060000003,
+      "tag": "0024_care_workspace",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791060000004,
+      "tag": "0025_care_scope_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791060000005,
+      "tag": "0026_care_provider_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1791060000006,
+      "tag": "0027_care_document_defence",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1791060000007,
+      "tag": "0028_care_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791060000008,
+      "tag": "0029_care_legacy_bridges",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1792397891685,
+      "tag": "0030_partner_onboarding",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792397978453,
+      "tag": "0031_partner_onboarding_functions_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1792419023105,
+      "tag": "0032_doctor_recruitment",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1792419278777,
+      "tag": "0033_doctor_assignment_revoke_writes",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1792432470508,
+      "tag": "0034_partner_customer_intake",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1792432747217,
+      "tag": "0035_partner_intake_evidence_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1792466701625,
+      "tag": "0036_consultation_request_lifecycle",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1792469376106,
+      "tag": "0037_manual_mcs_handoff",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1792470879318,
+      "tag": "0038_private_certificate_workflow",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1792471008981,
+      "tag": "0039_certificate_storage_defence",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1792472616964,
+      "tag": "0040_operations_console_audit_integrity",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1792472906626,
+      "tag": "0041_operations_evidence_private_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1792473481398,
+      "tag": "0042_private_operational_notification_outbox",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1792473728851,
+      "tag": "0043_notification_explicit_private_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1792473837900,
+      "tag": "0044_notification_scoped_anomaly_capture",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1792474618888,
+      "tag": "0045_operational_sla_control_plane",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1792474669702,
+      "tag": "0046_sla_explicit_private_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1792475901106,
+      "tag": "0047_privacy_consent_retention_controls",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1792476216910,
+      "tag": "0048_privacy_sla_notification_scope",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1792477282921,
+      "tag": "0049_internal_financial_reconciliation",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1792477330970,
+      "tag": "0050_financial_explicit_private_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1792477586282,
+      "tag": "0051_financial_projection_defence",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1792493085065,
+      "tag": "0052_release_readiness",
+      "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1792496158445,
+      "tag": "0053_release_evidence",
+      "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1792498156201,
+      "tag": "0054_release_review_acks",
+      "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1792498631179,
+      "tag": "0055_release_drill_runs",
+      "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1792499016887,
+      "tag": "0056_backup_evidence_register",
+      "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1792499272422,
+      "tag": "0057_backup_unsafe_word_boundary",
+      "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1792499484229,
+      "tag": "0058_protection_evidence_register",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1792500337594,
+      "tag": "0059_content_review_register",
+      "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1792500799932,
+      "tag": "0060_access_matrix_audit",
+      "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1792506158810,
+      "tag": "0061_verification_campaign_runs",
+      "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1792507554049,
+      "tag": "0062_production_test_readiness",
+      "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792554822273,
+      "tag": "0063_owner_action_queue",
+      "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1792555734134,
+      "tag": "0064_golive_decision_pack",
+      "breakpoints": true
+    },
+    {
+      "idx": 65,
+      "version": "7",
+      "when": 1792556147132,
+      "tag": "0065_test_session_workspace",
+      "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1792556332492,
+      "tag": "0066_test_session_record_fix",
+      "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1792556751246,
+      "tag": "0067_human_review_signoff",
+      "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1792556935807,
+      "tag": "0068_human_review_status_grant",
+      "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1792557671673,
+      "tag": "0069_content_approval_workspace",
+      "breakpoints": true
+    },
+    {
+      "idx": 70,
+      "version": "7",
+      "when": 1792557992863,
+      "tag": "0070_content_approval_console_mfa",
+      "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "7",
+      "when": 1792558767289,
+      "tag": "0071_launch_day_control",
+      "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1792559728695,
+      "tag": "0072_integration_provider_safety",
+      "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1792560336431,
+      "tag": "0073_incident_escalation_console",
+      "breakpoints": true
+    },
+    {
+      "idx": 74,
+      "version": "7",
+      "when": 1792560495310,
+      "tag": "0074_incident_console_phi_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 75,
+      "version": "7",
+      "when": 1792561327503,
+      "tag": "0075_evidence_integrity_inspector",
+      "breakpoints": true
+    },
+    {
+      "idx": 76,
+      "version": "7",
+      "when": 1792576112598,
+      "tag": "0076_final_release_artifact_ledger",
+      "breakpoints": true
+    },
+    {
+      "idx": 77,
+      "version": "7",
+      "when": 1792576534627,
+      "tag": "0077_release_bundle_source_integrity",
+      "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "7",
+      "when": 1792577176926,
+      "tag": "0078_owner_action_closure_dependency_board",
+      "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1792577358352,
+      "tag": "0079_owner_closure_source_review_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 80,
+      "version": "7",
+      "when": 1792578579503,
+      "tag": "0080_readiness_decision_ledger",
+      "breakpoints": true
+    },
+    {
+      "idx": 81,
+      "version": "7",
+      "when": 1792587059633,
+      "tag": "0081_validation_evidence_snapshot",
+      "breakpoints": true
+    },
+    {
+      "idx": 82,
+      "version": "7",
+      "when": 1792589841743,
+      "tag": "0082_session_start_gate",
+      "breakpoints": true
+    },
+    {
+      "idx": 83,
+      "version": "7",
+      "when": 1792591305999,
+      "tag": "0083_session_results",
+      "breakpoints": true
+    },
+    {
+      "idx": 84,
+      "version": "7",
+      "when": 1792591429715,
+      "tag": "0084_session_results_console_fix",
+      "breakpoints": true
+    },
+    {
+      "idx": 85,
+      "version": "7",
+      "when": 1792591492310,
+      "tag": "0085_session_results_console_ambiguity_fix",
+      "breakpoints": true
+    },
+    {
+      "idx": 86,
+      "version": "7",
+      "when": 1792591557061,
+      "tag": "0086_session_results_console_alias_fix",
+      "breakpoints": true
+    },
+    {
+      "idx": 87,
+      "version": "7",
+      "when": 1792596148762,
+      "tag": "0087_golive_evidence_matrix",
+      "breakpoints": true
+    },
+    {
+      "idx": 88,
+      "version": "7",
+      "when": 1792598231135,
+      "tag": "0088_human_review_packet",
+      "breakpoints": true
+    },
+    {
+      "idx": 89,
+      "version": "7",
+      "when": 1792641139393,
+      "tag": "0089_final_review_handoff_archive",
+      "breakpoints": true
+    },
+    {
+      "idx": 90,
+      "version": "7",
+      "when": 1792641439895,
+      "tag": "0090_handoff_review_revision_coverage",
+      "breakpoints": true
+    },
+    {
+      "idx": 91,
+      "version": "7",
+      "when": 1792641463359,
+      "tag": "0091_handoff_prerequisite_revision_source",
+      "breakpoints": true
+    },
+    {
+      "idx": 92,
+      "version": "7",
+      "when": 1792641642332,
+      "tag": "0092_release_archive_integrity_projection",
+      "breakpoints": true
+    },
+    {
+      "idx": 93,
+      "version": "7",
+      "when": 1792642240038,
+      "tag": "0093_owner_signoff_readiness",
+      "breakpoints": true
+    },
+    {
+      "idx": 94,
+      "version": "7",
+      "when": 1792646456028,
+      "tag": "0094_platform_site_branding_themes",
+      "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "7",
+      "when": 1792647527760,
+      "tag": "0095_site_settings_scoped_read_policy",
+      "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1792648397269,
+      "tag": "0096_site_settings_customer_theme",
+      "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "7",
+      "when": 1792650605675,
+      "tag": "0097_staff_auth_authorization_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "7",
+      "when": 1792650679819,
+      "tag": "0098_preserve_workflow_role_provisioning",
+      "breakpoints": true
+    },
+    {
+      "idx": 99,
+      "version": "7",
+      "when": 1792726366273,
+      "tag": "0099_staff_security_read_and_audit_boundaries",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+import {test,expect} from 'bun:test';
+import {csvCell,auditCsv,type AuditRow} from '../src/lib/operations-console.types';
+test('spreadsheet formulas are escaped including leading whitespace',()=>{for(const value of ['=1+1',' +SUM(A1)','\t@formula','-1'])expect(csvCell(value)).toStartWith('"\'');expect(csvCell('normal')).toBe('"normal"');});
+test('exports exclude extra clinical fields even when present on an input object',()=>{const row={id:'test',actor:null,role:null,organization:null,branch:null,action:'READ',target:'case',reference:null,timestamp:'2026-10-20',reason:null,correlation:null,summary:{balance_before:2,balance_after:1},fingerprint:'hash',verified:true,clinicalNotes:'DO_NOT_EXPORT',storage_path:'PRIVATE_FILE'} as AuditRow;const csv=auditCsv([row]);expect(csv).not.toContain('DO_NOT_EXPORT');expect(csv).not.toContain('PRIVATE_FILE');expect(csv).toContain('balance_before');});

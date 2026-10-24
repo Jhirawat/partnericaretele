@@ -1,0 +1,4 @@
+import {createFileRoute} from '@tanstack/react-router';
+import {SlaConsole,slaOptions} from '@/components/SlaConsole';
+import {ConsoleError} from '@/components/OperationsConsole';
+export const Route=createFileRoute('/_authenticated/sla')({staticData:{sitemap:false},loader:({context})=>context.queryClient.ensureQueryData(slaOptions('admin')),errorComponent:ConsoleError,head:()=>({meta:[{name:'robots',content:'noindex, nofollow'},{title:'SLA & escalation — iCareTele'},{name:'description',content:'Scoped operational SLA queues and policy review.'},{property:'og:title',content:'SLA & escalation — iCareTele'},{property:'og:description',content:'Private SLA clock and escalation management.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'}]}),component:()=> <SlaConsole mode="admin"/>});

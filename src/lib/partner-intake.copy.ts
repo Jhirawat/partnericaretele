@@ -1,0 +1,3 @@
+import {useCopy} from '@/i18n';
+export function useIntakeCopy(){return useCopy().c;}
+export const intakeState=(s:string,c:(th:string,en:string)=>string)=>({BLOCKED:c('หยุดคำขอ · ส่งต่อฉุกเฉิน','Blocked · emergency escalation'),MANUAL_REVIEW:c('รอทบทวนด้วยเจ้าหน้าที่','Manual review'),READY:c('ผ่านการคัดกรอง · รอส่งคำขอ','Screening passed · ready to request'),REQUESTED:c('ส่งคำขอแล้ว · รอแพทย์ทบทวน','Requested · awaiting Doctor review'),REJECTED:c('ปฏิเสธคำขอ','Rejected')}[s]??s);

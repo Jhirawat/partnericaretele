@@ -1,0 +1,5 @@
+import { requireStaffRoute } from '@/lib/staff-route-guard';
+import {createFileRoute} from '@tanstack/react-router';
+import {SlaConsole,slaOptions} from '@/components/SlaConsole';
+import {ConsoleError} from '@/components/OperationsConsole';
+export const Route=createFileRoute('/_authenticated/sla-health')({beforeLoad:()=>requireStaffRoute('super'),staticData:{sitemap:false},loader:({context})=>context.queryClient.ensureQueryData(slaOptions('super')),errorComponent:ConsoleError,head:()=>({meta:[{name:'robots',content:'noindex, nofollow'},{title:'SLA aggregates — iCareTele'},{name:'description',content:'Redacted cross-organization operational SLA totals.'},{property:'og:title',content:'SLA aggregates — iCareTele'},{property:'og:description',content:'Aggregate-only SLA health.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'}]}),component:()=> <SlaConsole mode="super"/>});

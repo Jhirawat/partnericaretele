@@ -1,0 +1,3 @@
+import {z} from 'zod';
+export const requestCommandSchema=z.object({op:z.enum(['DRAFT','SUBMIT','QUEUE','ACCEPT','SCHEDULE','START','COMPLETE','CANCEL','REJECT','MANUAL_REVIEW']),id:z.string().uuid(),key:z.string().uuid(),reason:z.string().trim().min(3).max(1000),scheduledAt:z.string().datetime({offset:true}).optional(),kind:z.enum(['PARTNER','ANNUAL','DIRECT']).optional(),membershipId:z.string().uuid().optional(),paymentId:z.string().uuid().optional()}).strict();
+export type RequestIntent=z.infer<typeof requestCommandSchema>;

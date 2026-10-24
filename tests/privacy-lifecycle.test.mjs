@@ -1,0 +1,56 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {createTestDb,actor,uuid} from './care-db.mjs';
+test('privacy lifecycle uses actual roles, reviewed scope and non-destructive commands',async t=>{
+ const db=await createTestDb();t.after(()=>db.close());for(const f of ['0055_certificate_workflow','0056_certificate_storage_defence','0057_operations_console','0058_operations_evidence_private_grants','0059_notification_outbox','0060_notification_explicit_private_grants','0061_notification_anomaly_capture','0062_operational_sla','0063_sla_explicit_private_grants','0064_privacy_lifecycle','0065_privacy_sla_notification_scope','0066_financial_reconciliation','0067_financial_explicit_private_grants','0068_financial_projection_defence'])await db.exec(await readFile(`db/${f}.sql`,'utf8'));
+ const a=uuid(14001),b=uuid(14002),l=uuid(14003),lb=uuid(14004),admin=uuid(14005),reviewer=uuid(14006),other=uuid(14007),su=uuid(14008),owner=uuid(14009),patient=uuid(14010);
+ await db.exec(`INSERT INTO partners(id,partner_code,legal_name,display_name) VALUES('${a}','PRIV-A','Synthetic','Synthetic'),('${b}','PRIV-B','Other','Other');INSERT INTO locations(id,partner_id,code,name) VALUES('${l}','${a}','A','Synthetic'),('${lb}','${b}','B','Other');INSERT INTO user_roles(user_id,role,partner_id) VALUES('${admin}','OPERATIONS_ADMIN','${a}'),('${reviewer}','OPERATIONS_ADMIN','${a}'),('${other}','OPERATIONS_ADMIN','${b}'),('${su}','SUPER_ADMIN',null),('${owner}','PARTNER_OWNER','${a}');INSERT INTO patients(id,partner_id,first_name,last_name,email) VALUES('${patient}','${a}','SECRETNAME','Private','private@example.invalid');INSERT INTO partner_customers(patient_id,partner_id,location_id,created_by,created_at) VALUES('${patient}','${a}','${l}','${owner}',now()-interval '30 days');`);
+ const as=async(u,fn,role='authenticated')=>{await actor(db,u);await db.exec('SET ROLE '+role);try{return await fn()}finally{await db.exec('RESET ROLE')}};
+ const cmd=(op,args={},key=crypto.randomUUID())=>db.query('SELECT privacy_command($1,$2::jsonb,$3) r',[op,JSON.stringify({reason:'Synthetic verified request',...args}),key]).then(x=>x.rows[0].r);
+ const read=(mode='admin')=>db.query('SELECT privacy_center($1) r',[mode]).then(x=>x.rows[0].r);
+ const request=async(kind)=> (await as(admin,()=>cmd('request',{patient_id:patient,kind}))).id;
+ const approved=async(kind)=>{const id=await request(kind);await as(admin,()=>cmd('verify',{id,verification_method:'in_person'}));await as(reviewer,()=>cmd('approve',{id}));return id;};
+ await t.test('scope, forged authority, direct grants and aggregate-only Superadmin',async()=>{
+ await assert.rejects(as(other,()=>cmd('request',{patient_id:patient,kind:'export'})),/SCOPED_ADMIN_REQUIRED/);await assert.rejects(as(owner,()=>read()),/SCOPED_ADMIN_REQUIRED/);await assert.rejects(as(su,()=>read()),/SCOPED_ADMIN_REQUIRED/);await assert.rejects(as(admin,()=>cmd('request',{patient_id:patient,kind:'export',actor:su})),/INVALID_ARGUMENTS/);await assert.rejects(as(null,()=>read(),'anon'),/permission denied/);
+ assert.equal((await as(other,()=>read())).customers.length,0);const aggregate=await as(su,()=>read('super'));assert.deepEqual(aggregate.rows,[]);assert.ok(!JSON.stringify(aggregate).includes(patient));
+ for(const table of ['privacy_requests','privacy_policies','privacy_controls','privacy_consent_events','privacy_events','privacy_operations']){const r=(await db.query("SELECT has_table_privilege('anon',$1,'SELECT') a,has_table_privilege('authenticated',$1,'INSERT') i",[table])).rows[0];assert.equal(r.a,false);assert.equal(r.i,false)}
+ });
+ await t.test('retention versions require independent approval, no overlapping ranges or automatic deletion',async()=>{
+ const args={partner_id:a,kind:'customer',days:10,effective_from:'2020-01-01T00:00:00Z'};const id=(await as(admin,()=>cmd('policy_propose',args))).id;await as(admin,()=>cmd('policy_submit',{id}));await assert.rejects(as(admin,()=>cmd('policy_approve',{id})),/INDEPENDENT_APPROVAL_REQUIRED/);await as(reviewer,()=>cmd('policy_approve',{id}));
+ const rr=(await as(admin,()=>read())).retention.find(x=>x.id===patient);assert.equal(rr.status,'due_review');assert.equal(rr.version,1);assert.ok(rr.days_remaining<0);assert.equal((await db.query('SELECT count(*)::int n FROM patients WHERE id=$1',[patient])).rows[0].n,1);
+ await assert.rejects(db.query('UPDATE privacy_policies SET days=1 WHERE id=$1',[id]),/IMMUTABLE_POLICY_VERSION/);const id2=(await as(admin,()=>cmd('policy_propose',args))).id;await as(admin,()=>cmd('policy_submit',{id:id2}));await assert.rejects(as(reviewer,()=>cmd('policy_approve',{id:id2})),/OVERLAPPING_POLICY/);
+ await assert.rejects(as(admin,()=>cmd('policy_propose',{...args,location_id:lb})),/SCOPE_REQUIRED/);
+ });
+ await t.test('two-step identity verification and approval gate redacted idempotent export',async()=>{
+ const id=await request('export');await assert.rejects(as(reviewer,()=>cmd('approve',{id})),/INDEPENDENT_APPROVAL_REQUIRED/);await assert.rejects(as(admin,()=>cmd('package',{id})),/APPROVED_EXPORT_REQUIRED/);await assert.rejects(as(admin,()=>cmd('verify',{id})),/VERIFICATION_REQUIRED/);await as(admin,()=>cmd('verify',{id,verification_method:'in_person'}));await assert.rejects(as(admin,()=>cmd('approve',{id})),/INDEPENDENT_APPROVAL_REQUIRED/);await as(reviewer,()=>cmd('approve',{id}));const key=uuid(14020);const pkg=await as(admin,()=>cmd('package',{id},key));assert.equal(pkg.files_included,false);assert.equal(pkg.clinical_content_included,false);assert.ok(!JSON.stringify(pkg).includes('SECRETNAME'));assert.ok(!JSON.stringify(pkg).includes('private@example'));assert.deepEqual(await as(admin,()=>cmd('package',{id},key)),pkg);assert.equal((await as(admin,()=>read())).rows.find(x=>x.id===id).status,'completed');
+ });
+ await t.test('legal hold prevents approved soft deletion; explicit release retains history',async()=>{
+ const hold=await approved('hold');await as(admin,()=>cmd('execute',{id:hold,hold_type:'legal',confirm:'APPROVED_ACTION'}));assert.equal((await as(admin,()=>read())).retention.find(x=>x.id===patient).status,'held');const del=await approved('deletion');await assert.rejects(as(admin,()=>cmd('execute',{id:del,confirm:'APPROVED_ACTION'})),/ACTIVE_HOLD/);const release=await approved('release_hold');await as(admin,()=>cmd('execute',{id:release,confirm:'APPROVED_ACTION'}));assert.equal((await as(admin,()=>read())).customers[0].hold_type,null);
+ });
+ await t.test('consent withdrawal blocks future assessment and legacy regrant without erasing history',async()=>{
+ await as(admin,()=>cmd('consent',{patient_id:patient,purpose:'TELEMEDICINE',policy_version:'v1',state:'granted',source:'customer_in_person'}));await as(admin,()=>cmd('consent',{patient_id:patient,purpose:'TELEMEDICINE',policy_version:'v1',state:'withdrawn',source:'customer_in_person'}));assert.equal((await as(admin,()=>read())).consents.find(x=>x.purpose==='TELEMEDICINE').state,'withdrawn');
+ await assert.rejects(db.exec(`INSERT INTO partner_intakes(patient_id,partner_id,location_id,evidence,gates,status,evaluated_by,reason) VALUES('${patient}','${a}','${l}','{"consentEvidence":"Synthetic"}','[]','READY','${owner}','Synthetic');`),/PRIVACY_CONSENT_RESTRICTED/);
+ await assert.rejects(db.exec(`INSERT INTO patient_consents(patient_id,consent_type,version,accepted,recorded_by) VALUES('${patient}','TELEMEDICINE','v1',true,'${admin}');`),/PRIVACY_CONSENT_RESTRICTED/);
+ await assert.rejects(db.exec('DELETE FROM privacy_consent_events'),/IMMUTABLE_HISTORY/);
+ await as(admin,()=>cmd('consent',{patient_id:patient,purpose:'TELEMEDICINE',policy_version:'v2',state:'granted',source:'customer_in_person'}));assert.equal((await as(admin,()=>read())).consents.find(x=>x.purpose==='TELEMEDICINE').state,'granted');
+ });
+ await t.test('maintenance exceptions preserve due records without changing policy history',async()=>{
+ await db.exec(`INSERT INTO operational_maintenance(partner_id,location_id,starts_at,ends_at,reason,created_by) VALUES('${a}','${l}',now()-interval '1 minute',now()+interval '1 minute','Synthetic maintenance','${admin}');`);
+ assert.equal((await as(admin,()=>read())).retention.find(x=>x.id===patient).status,'maintenance');
+ const second=await approved('hold');await as(admin,()=>cmd('execute',{id:second,hold_type:'clinical',confirm:'APPROVED_ACTION'}));const replacement=await approved('hold');await assert.rejects(as(admin,()=>cmd('execute',{id:replacement,hold_type:'maintenance',confirm:'APPROVED_ACTION'})),/ACTIVE_HOLD_REQUIRES_RELEASE/);
+ const release=await approved('release_hold');await as(admin,()=>cmd('execute',{id:release,confirm:'APPROVED_ACTION'}));
+ });
+ await t.test('approved correction and anonymization change operational displays only',async()=>{
+ const correction=(await as(admin,()=>cmd('request',{patient_id:patient,kind:'correction',first_name:'Corrected',last_name:'Synthetic',email:'corrected@example.invalid',phone_number:'0000'}))).id;
+ await as(admin,()=>cmd('verify',{id:correction,verification_method:'in_person'}));await as(reviewer,()=>cmd('approve',{id:correction}));await as(admin,()=>cmd('execute',{id:correction,confirm:'APPROVED_ACTION'}));
+ const display=()=>db.query('SELECT privacy_customer_display($1) r',[patient]).then(x=>x.rows[0].r);
+ assert.equal((await as(admin,display)).first_name,'Corrected');assert.equal((await db.query('SELECT first_name FROM patients WHERE id=$1',[patient])).rows[0].first_name,'SECRETNAME');
+ await assert.rejects(as(other,display),/CUSTOMER_SCOPE_REQUIRED/);
+ const id=await approved('anonymization');await as(admin,()=>cmd('execute',{id,confirm:'APPROVED_ACTION'}));assert.equal((await as(admin,display)).email,null);assert.equal((await as(admin,display)).first_name,'Restricted');assert.equal((await as(admin,()=>read())).customers[0].anonymized,true);
+ });
+ await t.test('soft restriction is explicit; clinical accounting and certificate/handoff history retained',async()=>{
+ const id=await approved('deletion');await assert.rejects(as(admin,()=>cmd('execute',{id})),/APPROVED_CONFIRMATION_REQUIRED/);await as(admin,()=>cmd('execute',{id,confirm:'APPROVED_ACTION'}));assert.equal((await as(admin,()=>read())).customers[0].soft_deleted,true);const raw=(await db.query('SELECT first_name,auth_user_id FROM patients WHERE id=$1',[patient])).rows[0];assert.equal(raw.first_name,'SECRETNAME');assert.equal(raw.auth_user_id,null);await assert.rejects(db.exec(`UPDATE patients SET first_name='Overwrite' WHERE id='${patient}'`),/RESTRICTED_CUSTOMER/);await assert.rejects(db.exec('DELETE FROM privacy_events'),/IMMUTABLE_HISTORY/);
+ for(const table of ['care_holds','credit_transactions','care_certificate_revisions','care_mcs_handoff_events'])assert.equal((await db.query(`SELECT count(*)::int n FROM ${table}`)).rows[0].n,0);
+ await db.query("UPDATE user_roles SET status='REMOVED' WHERE user_id=$1",[admin]);await assert.rejects(as(admin,()=>read()),/SCOPED_ADMIN_REQUIRED/);
+ const prior=(await db.query('SELECT intent FROM privacy_operations WHERE key=$1',[uuid(14020)])).rows[0].intent;
+ await assert.rejects(as(admin,()=>cmd('package',prior.args,uuid(14020))),/SCOPED_ADMIN_REQUIRED/);
+ });
+});

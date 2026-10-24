@@ -1,0 +1,40 @@
+# Privacy, consent and retention review — 2026-10-20
+
+## Delivered
+- `/privacy`: organization-scoped Operations Admin data-request queue, identity-verification method/reason capture, independent approval, explicit action confirmation, hold/release, redacted JSON download, current consent and consent history, immutable retention versions and countdown/review queue.
+- `/privacy-health`: global Superadmin counts only. No customer IDs, reasons, correction values, certificate details, individual requests or links. Detailed privacy work requires an existing active organization-scoped Operations Admin membership; a global role alone cannot drill down.
+- Requests support access/export, correction, restriction, legal/clinical/maintenance hold, hold release, soft deletion and operational anonymization. Verification precedes approval; requester/verifier cannot approve their own request. Commands require strong authentication, reasons, current role/scope, row locks and idempotency keys.
+- Approved corrections are organization-bound operational display overlays; approved anonymization masks operational display/contact details. Approved deletion soft-restricts the customer. Raw shared identity, clinical safety and accounting records remain unchanged. No automatic physical deletion, storage removal or historical anonymization.
+- Consent events record purpose, supplied policy version, source, actor, time and correlation. Withdrawal blocks new assessments, request submission/acceptance/scheduling/start, legacy consent regrant and customer-linked notifications, including SLA reminders. Existing cancellation and completion/settlement paths remain available; historical evidence is not rewritten. Explicit verified re-consent can restore consent eligibility, but does not remove a restriction/deletion overlay or bypass existing four-gate screening.
+- Legal/clinical/maintenance holds prevent deletion/anonymization. An active hold cannot be overwritten with a weaker one; approved release is required. Retention shows holds and existing operational maintenance exceptions.
+- Seven retention categories: customers, requests, screening evidence, audit events, notification payloads, MCS metadata and certificate metadata/files (certificate review references only; no file contents). Effective policy ranges are independently approved, immutable and reject overlapping approved versions in the same scope. No retention period is invented or seeded.
+- Redacted export contains only customer reference, request states/times, consent policy/state/time and certificate state/time. No names/contact details, screening content, file bytes, storage paths, private links, hashes, MCS packets, secrets or clinical content. Each package command is audited and authorized again; downloads are browser-local JSON, not stored publicly.
+
+## Cloud-confirmed changes
+- `db/0064_privacy_lifecycle.sql` matches applied `drizzle/migrations/0047_privacy_consent_retention_controls.sql` byte-for-byte.
+- `db/0065_privacy_sla_notification_scope.sql` matches applied `drizzle/migrations/0048_privacy_sla_notification_scope.sql` byte-for-byte; this resolves SLA source references and validates current source organization/branch scope.
+- Live catalog confirms all six new tables have RLS, anon SELECT=false and authenticated INSERT=false. Anon execution denied for privacy commands, reads, display and private inventory helper. Generated database types were refreshed by Cloud, not edited manually.
+- No reset, squash, deletion/rewrite of migrations, dropped data, disabled RLS, publishing, production test records, provider connections or external delivery.
+
+## Application and test files
+- New: `src/lib/privacy.types.ts`, `src/lib/privacy.functions.ts`, `src/components/PrivacyCenter.tsx`, `src/routes/_authenticated/privacy.tsx`, `privacy-health.tsx`, `tests/privacy-lifecycle.test.mjs`, both canonical SQL files above.
+- Updated: `src/components/AppShell.tsx`, `src/components/PartnerIntakeWorkspace.tsx`, `src/lib/partner-intake.functions.ts`, `src/lib/request-lifecycle.functions.ts`, `tests/request-lifecycle.test.mjs`, `tests/certificates.test.mjs`, `AGENTS.md`, `roadmap.md`.
+- Existing customer/request displays use the authorized privacy overlay; restricted customers cannot be edited or screened through the normal customer form. Clinical history is retained, not purged or globally hidden.
+
+## Verified results
+- Full Node suite: **279 total, 278 passed, 0 failed, 1 optional independent-PostgreSQL contention test skipped**.
+- Separate file-validation/export/disabled-worker tests: **6 passed, 0 failed**.
+- Actual authenticated/anon roles exercised: cross-org/branch denials, client authority forgery, immutable versions, overlapping policy rejection, due countdown, maintenance exception, legal hold/release/replacement denial, verified independent approval, explicit execution confirmation, idempotent export, withdrawal and legacy regrant denial, correction/anonymized overlay, revoked actor/retry denial, safe credit release after withdrawal, notification and SLA suppression.
+- Populated certificate, handoff, credit and ledger snapshots remain identical after privacy hold/export commands; existing certificate audit immutability and financial lifecycle regressions pass.
+- Automatic typecheck/build: latest observed **build OK at 06:04:08 UTC**. Manual build/typecheck commands were not run because the environment performs them automatically.
+- Browser checks: `/`, `/auth`, `/partner-apply`, `/privacy`, `/privacy-health`, `/sla`, `/notifications`, `/preview/admin`, `/preview/superadmin`, `/preview/doctor` rendered without page errors. Protected pages redirected signed-out users to `/auth?signup=false`; screenshot verified the sign-in view.
+
+## Limitations and remaining verification
+- **Signed-in browser end-to-end remains blocked:** the requesting user has no matching auth account. Session minting with `--self` confirmed this; no other account was selected and no production fixtures created. Authorized preview sign-in is required for a real click-through/download check.
+- Verification methods/reasons are operator attestations, not an automated identity-verification provider. Policy/legal periods, consent text/version and evidence must be supplied by authorized staff. No legal compliance certification is claimed.
+- Anonymization is an operational pseudonymized display, not irreversible de-identification. Raw required clinical/accounting records remain retained and available through existing protected clinical/staff paths. Correction does not alter historical signed notes, evidence or ledger identity. No destructive purge is implemented.
+- Retention applies the approved version whose effective window covers a record's creation time. Earlier uncovered records stay unconfigured; no invented retroactive policy. Audit events without branch/customer are organization-scoped and conservatively held when any active organization hold exists. Certificate versions/files remain physically retained.
+- Privacy queue/customer/policy limits are 100; history/retention limits are 200. Export sections are capped at 100 and are deliberately minimum-data packages, not a complete statutory data-subject disclosure. No scheduler, automated deletion, full-data export or external delivery.
+- Historical consent rows were not backfilled or rewritten. New authoritative legacy consent inserts append history; enrolled customer legacy consent updates/deletes are blocked. Current consent in the privacy view starts with captured events; absence is not represented as a new approval.
+- Holds pause retention action only, not care or SLA clocks; restrictions/withdrawal prevent future consent-dependent transitions without cancelling existing cases automatically. Clinical staff must handle outstanding cases through existing authorized workflow.
+- Current operations copy follows Thai labels/English fallback; identifiers/states remain machine codes. Auth and existing five-locale public pages were preserved.

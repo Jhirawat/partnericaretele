@@ -1,0 +1,3 @@
+REVOKE ALL ON public.operational_notification_preferences,public.operational_notifications,public.operational_notification_history,public.operational_notification_operations FROM PUBLIC,anon,authenticated;
+GRANT SELECT ON public.operational_notification_preferences,public.operational_notifications,public.operational_notification_history TO authenticated;
+GRANT ALL ON public.operational_notification_preferences,public.operational_notifications,public.operational_notification_history,public.operational_notification_operations TO service_role;

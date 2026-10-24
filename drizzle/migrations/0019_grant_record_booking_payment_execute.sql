@@ -1,0 +1,2 @@
+GRANT EXECUTE ON FUNCTION public.record_booking_payment(UUID, NUMERIC, public.payment_channel, TEXT, TEXT, NUMERIC) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.record_booking_payment(UUID, NUMERIC, public.payment_channel, TEXT, TEXT, NUMERIC) TO service_role;

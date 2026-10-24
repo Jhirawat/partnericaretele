@@ -1,0 +1,6 @@
+import {createServerFn} from '@tanstack/react-start';
+import {requireSupabaseAuth} from '@/integrations/supabase/auth-middleware';
+import {z} from 'zod';
+import {privacyOps,type PrivacyData,type PrivacyTotals} from './privacy.types';
+export const readPrivacy=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((v:unknown)=>z.object({mode:z.enum(['admin','super'])}).strict().parse(v)).handler(async({data,context})=>{if(data.mode==='super'){const gate=await context.supabase.rpc('staff_access_check',{_scope:'super'});if(gate.error||gate.data!=='ALLOWED')throw new Error('PRIVACY_ACCESS_DENIED');}const {data:result,error}=await context.supabase.rpc('privacy_center',{_mode:data.mode});if(error)throw new Error('PRIVACY_ACCESS_DENIED');return result as unknown as PrivacyData|PrivacyTotals;});
+export const commandPrivacy=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((v:unknown)=>z.object({op:z.enum(privacyOps),key:z.uuid(),args:z.record(z.string(),z.union([z.string(),z.number(),z.null()]))}).strict().parse(v)).handler(async({data,context})=>{const {data:result,error}=await context.supabase.rpc('privacy_command',{_op:data.op,_args:data.args,_key:data.key});if(error)throw new Error('PRIVACY_ACTION_DENIED');return result;});
