@@ -12,9 +12,9 @@
   to { opacity: 1; }
 }
 
-.motion-page { animation: site-fade-in var(--motion-duration, 220ms) var(--motion-ease, ease-out); }
-.motion-section { animation: site-fade-up var(--motion-duration, 220ms) var(--motion-ease, ease-out) var(--motion-delay, 0ms) both; }
-.motion-card, .surface, .workspace-navigation a, button { transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease, color 140ms ease; }
+.motion-page { animation: site-fade-in var(--motion-duration, 180ms) var(--motion-ease, cubic-bezier(.2,.8,.2,1)); }
+.motion-section { animation: site-fade-up var(--motion-duration, 180ms) var(--motion-ease, cubic-bezier(.2,.8,.2,1)) var(--motion-delay, 0ms) both; }
+.motion-card, .surface, .workspace-navigation a, button { transition: transform var(--motion-standard, 180ms) var(--ease-standard, cubic-bezier(.2,.8,.2,1)), box-shadow var(--motion-standard, 180ms) var(--ease-standard, cubic-bezier(.2,.8,.2,1)), background-color var(--motion-standard, 180ms) ease, color var(--motion-standard, 180ms) ease; }
 .motion-card:hover, .surface:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
 button:active { transform: scale(0.98); }
 
@@ -27,13 +27,13 @@ button:active { transform: scale(0.98); }
 
 /*
  * THAIKANYA PartnerCare design system.
- * Premium clinical SaaS: deep jade, calm slate, warm sand accent.
+ * iCare Calm Partner Operations: deep teal, warm sand, off-white and coral.
  * All colours are oklch tokens. Never hardcode colours in components.
  */
 
 @theme inline {
-  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Noto Serif Thai", "Noto Serif", Georgia, serif;
+  --font-sans: "IBM Plex Sans Thai", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -89,39 +89,68 @@ button:active { transform: scale(0.98); }
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.978 0.012 85);
-  --foreground: oklch(0.24 0.028 195);
+  --ic-bg: #f8f7f3;
+  --ic-surface: #ffffff;
+  --ic-surface-muted: #f1eee7;
+  --ic-ink: #102f3d;
+  --ic-text: #243746;
+  --ic-muted: #61727d;
+  --ic-border: #dce3e3;
+  --ic-teal-900: #0f4c5c;
+  --ic-teal-700: #176477;
+  --ic-teal-100: #dcecef;
+  --ic-sand-200: #e9dcc9;
+  --ic-coral-700: #b4532f;
+  --ic-coral-500: #d97757;
+  --ic-success-700: #146c57;
+  --ic-success-100: #dff3ec;
+  --ic-warning-700: #7a4b08;
+  --ic-warning-100: #fff2cc;
+  --ic-danger-700: #a33b3b;
+  --ic-danger-100: #fde5e5;
+  --ic-info-700: #245c79;
+  --ic-info-100: #e1f0f7;
+  --ic-violet-700: #6848ad;
+  --ic-violet-100: #eee8ff;
+  --motion-fast: 120ms;
+  --motion-standard: 180ms;
+  --motion-slow: 260ms;
+  --ease-standard: cubic-bezier(.2,.8,.2,1);
+  --ease-emphasis: cubic-bezier(.16,1,.3,1);
+
+  --background: var(--ic-bg);
+  --foreground: var(--ic-text);
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.24 0.028 195);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.24 0.028 195);
 
-  --primary: oklch(0.35 0.065 165);
-  --primary-foreground: oklch(0.985 0.01 170);
+  --primary: var(--ic-teal-900);
+  --primary-foreground: #f8fbfb;
 
-  --secondary: oklch(0.955 0.015 175);
-  --secondary-foreground: oklch(0.31 0.05 185);
+  --secondary: var(--ic-teal-100);
+  --secondary-foreground: var(--ic-teal-900);
 
   --muted: oklch(0.958 0.008 170);
-  --muted-foreground: oklch(0.52 0.022 195);
+  --muted-foreground: var(--ic-muted);
 
-  --accent: oklch(0.88 0.062 85);
-  --accent-foreground: oklch(0.3 0.05 80);
+  --accent: var(--ic-sand-200);
+  --accent-foreground: var(--ic-ink);
 
-  --destructive: oklch(0.55 0.19 25);
-  --destructive-foreground: oklch(0.985 0.005 90);
+  --destructive: var(--ic-danger-700);
+  --destructive-foreground: #fff;
 
-  --success: oklch(0.6 0.12 155);
-  --success-foreground: oklch(0.99 0.005 155);
-  --warning: oklch(0.78 0.13 78);
-  --warning-foreground: oklch(0.28 0.05 78);
-  --info: oklch(0.6 0.09 235);
-  --info-foreground: oklch(0.99 0.005 235);
+  --success: var(--ic-success-700);
+  --success-foreground: #fff;
+  --warning: var(--ic-warning-700);
+  --warning-foreground: var(--ic-warning-700);
+  --info: var(--ic-info-700);
+  --info-foreground: #fff;
 
-  --border: oklch(0.9 0.012 180);
-  --input: oklch(0.9 0.012 180);
-  --ring: oklch(0.44 0.088 178);
+  --border: var(--ic-border);
+  --input: var(--ic-border);
+  --ring: var(--ic-teal-700);
 
   --chart-1: oklch(0.44 0.088 178);
   --chart-2: oklch(0.65 0.1 200);
@@ -129,7 +158,7 @@ button:active { transform: scale(0.98); }
   --chart-4: oklch(0.6 0.12 155);
   --chart-5: oklch(0.52 0.07 265);
 
-  --sidebar: oklch(0.26 0.036 190);
+  --sidebar: var(--ic-teal-900);
   --sidebar-foreground: oklch(0.93 0.015 175);
   --sidebar-primary: oklch(0.72 0.1 172);
   --sidebar-primary-foreground: oklch(0.2 0.03 190);
@@ -175,6 +204,12 @@ button:active { transform: scale(0.98); }
   --sidebar-ring: oklch(0.72 0.1 172);
 }
 
+/* Role identity is visual context only. Authorization remains server/database enforced. */
+.workspace-shell[data-role="SUPER_ADMIN"] { --sidebar: #0b1220; --sidebar-accent: #202b4a; --primary: #6848ad; --ring: #a78bfa; }
+.workspace-shell[data-role="OPERATIONS_ADMIN"] { --sidebar: #0f4c5c; --sidebar-accent: #176477; --primary: #176477; --ring: #38bdf8; }
+.workspace-shell[data-role="DOCTOR"] { --sidebar: #18233f; --sidebar-accent: #26365c; --primary: #146c57; --ring: #7dd3fc; }
+.workspace-shell[data-role="PARTNER_OWNER"], .workspace-shell[data-role="PARTNER_MANAGER"], .workspace-shell[data-role="PARTNER_STAFF"] { --sidebar: #0f4c5c; --sidebar-accent: #176477; --primary: #b4532f; --ring: #d97757; }
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -185,6 +220,7 @@ button:active { transform: scale(0.98); }
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
@@ -192,8 +228,10 @@ button:active { transform: scale(0.98); }
   h3,
   h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.01em;
   }
+
+  :focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
 }
 
 @utility surface {
@@ -252,4 +290,47 @@ button:active { transform: scale(0.98); }
 .workspace-topbar .workspace-navigation nav { flex-direction: row; overflow-x: auto; }
 .workspace-collapsed .workspace-navigation nav { display: none; }
 .workspace-topbar .workspace-brand { max-width: 40rem; }
-@media (prefers-reduced-motion: reduce) { .site-theme * { transition: none; } }
+.workspace-main { min-width: 0; }
+.workspace-context { min-width: 0; margin-right: auto; display: flex; align-items: center; gap: .65rem; }
+.workspace-role-badge { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .3rem .65rem; font-size: .75rem; font-weight: 700; letter-spacing: .04em; background: color-mix(in srgb, var(--ring) 16%, transparent); color: var(--primary); }
+.workspace-security-strip { border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 44%, var(--background)); color: var(--muted-foreground); font-size: .75rem; padding: .45rem 1.5rem; }
+.workspace-mobile-nav { display: none; }
+.dashboard-greeting { font-size: clamp(2rem, 4vw, 2.75rem); line-height: 1.08; }
+.dashboard-primary-action { background: linear-gradient(110deg, var(--ic-sand-200), color-mix(in srgb, var(--ic-sand-200) 70%, white)); }
+.dashboard-stat-icon { display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 999px; background: var(--ic-info-100); color: var(--ic-info-700); }
+.dashboard-stat-icon[data-tone="warning"] { background: var(--ic-warning-100); color: var(--ic-warning-700); }
+.dashboard-stat-icon[data-tone="success"] { background: var(--ic-success-100); color: var(--ic-success-700); }
+.dashboard-stat-icon[data-tone="danger"] { background: var(--ic-danger-100); color: var(--ic-danger-700); }
+.dashboard-pipeline { overflow-x: auto; }
+.dashboard-pipeline-track { min-width: 680px; }
+
+@media (max-width: 1023px) {
+  .workspace-shell { display: block; }
+  .workspace-navigation { position: sticky; top: 0; z-index: 20; width: 100%; height: auto; }
+  .workspace-navigation > div:first-child { padding-block: .7rem; }
+  .workspace-navigation nav { flex-direction: row; overflow-x: auto; padding-bottom: .7rem; scrollbar-width: thin; }
+  .workspace-navigation nav a { white-space: nowrap; }
+  .workspace-security-strip { padding-inline: 1rem; }
+  .workspace-mobile-nav { display: none; }
+}
+
+@media (max-width: 767px) {
+  .workspace-navigation { display: none; }
+  .workspace-shell { padding-bottom: 4.75rem; }
+  .workspace-shell > .flex { min-height: 100vh; }
+  .workspace-shell .workspace-main { padding: 1rem; }
+  .workspace-shell header { position: sticky; top: 0; z-index: 15; padding: .7rem 1rem; }
+  .workspace-context { max-width: 56%; }
+  .workspace-context .workspace-context-scope { display: none; }
+  .workspace-security-strip { padding: .45rem 1rem; }
+  .workspace-mobile-nav { display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .25rem; padding: .45rem .65rem calc(.45rem + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--sidebar) 96%, black); border-top: 1px solid color-mix(in srgb, var(--sidebar-foreground) 18%, transparent); }
+  .workspace-mobile-nav a { display: grid; justify-items: center; gap: .2rem; min-height: 44px; padding: .35rem .2rem; border-radius: .65rem; color: var(--sidebar-foreground); font-size: .68rem; text-align: center; }
+  .workspace-mobile-nav a[data-active="true"] { background: var(--sidebar-accent); }
+  .dashboard-greeting { font-size: 2rem; }
+  .dashboard-primary-action { align-items: flex-start; flex-direction: column; }
+  .dashboard-primary-action a { width: 100%; }
+  .dashboard-stat-grid { grid-template-columns: 1fr; }
+  .dashboard-pipeline-track { min-width: 640px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .site-theme * { transition: none; } .motion-page, .motion-section { animation: none; } }

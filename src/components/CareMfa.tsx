@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 /** Authenticator material exists only in browser state; never log it. */
-export function CareMfa() {
+export function CareMfa({ onVerified }: { onVerified?: () => void }) {
   const { c } = useCopy();
   const [level, setLevel] = useState("aal1");
   const [factor, setFactor] = useState("");
@@ -65,9 +65,13 @@ export function CareMfa() {
     try {
       const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor, code });
       if (error) throw error;
+      // challengeAndVerify updates the active session and its AAL2 claim.
+      // Do not await a second refresh here: local GoTrue can keep that
+      // request open while the factor session is being finalized.
       setLevel("aal2");
       setQr("");
       setCode("");
+      onVerified?.();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unable to verify");
     } finally {

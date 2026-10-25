@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // Phase 01 content policy: public/patient/partner-facing UI copy must not
 // reference cannabis subject matter or former PT28/PT33 government-form
@@ -41,7 +42,7 @@ test("named public/patient/partner copy files contain no prohibited terms", asyn
 
 test("no i18n locale string contains prohibited terms", async () => {
   const dir = new URL("../src/i18n/locales/", import.meta.url);
-  for await (const file of walk(dir.pathname)) {
+  for await (const file of walk(fileURLToPath(dir))) {
     const text = await readFile(file, "utf8");
     for (const pattern of PROHIBITED) {
       assert.ok(!pattern.test(text), `${file} matches prohibited pattern ${pattern}`);

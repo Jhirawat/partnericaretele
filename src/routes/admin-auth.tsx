@@ -43,9 +43,9 @@ function StaffSignIn() {
     }}>
       <Label htmlFor="staff-email">Staff email</Label><Input id="staff-email" type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} />
       <Label htmlFor="staff-password">Password</Label><Input id="staff-password" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} />
-      <Button disabled={busy} className="w-full">Sign in</Button>
+      <Button disabled={busy || state === "MFA_REQUIRED"} className="w-full">Sign in</Button>
     </form>
-    {state === "MFA_REQUIRED" && <><CareMfa /><Button onClick={() => void continueSignIn()}>Continue after verification</Button></>}
+    {state === "MFA_REQUIRED" && <><CareMfa onVerified={() => void continueSignIn()} /><Button onClick={() => void continueSignIn()}>Continue after verification</Button></>}
     {state === "RESET_REQUIRED" && <p role="status">A password change is required before staff access. Use the owner-provided invitation or recovery link. <Link to="/reset-password" className="underline">Change password</Link></p>}
     {["DENIED", "SIGN_IN_FAILED"].includes(state) && <p role="alert" className="text-destructive">Staff access is unavailable for this account.</p>}
     <section className="space-y-2 border-t border-border pt-5 text-sm text-muted-foreground">

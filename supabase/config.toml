@@ -1,1 +1,5 @@
 project_id = "wwjfweofvxooyvlhoody"
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true

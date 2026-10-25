@@ -23,6 +23,8 @@ dist-ssr
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+supabase/.branches/
+supabase/.temp/
 
 # Editor directories and files
 .vscode/*
