@@ -15,7 +15,6 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/i18n";
 import { Toaster } from "@/components/ui/sonner";
-import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -94,7 +93,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <PaymentTestModeBanner />
         <Outlet />
         <Toaster position="top-center" />
       </I18nProvider>
