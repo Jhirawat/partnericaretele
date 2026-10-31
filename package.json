@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "build:apk": "vite build && node scripts/prepare-capacitor.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -18,6 +19,10 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.71",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/core": "^8.5.3",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@lovable.dev/mcp-js": "^3.0.4",
@@ -79,6 +84,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "@electric-sql/pglite": "^0.5.8",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.26.5",

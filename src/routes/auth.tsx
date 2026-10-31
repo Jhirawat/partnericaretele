@@ -2,6 +2,9 @@ import {pageHead,organizationLd,websiteLd} from "@/lib/seo";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { App } from "@capacitor/app";
+import { Browser } from "@capacitor/browser";
+import { Capacitor } from "@capacitor/core";
 
 import { useI18n } from "@/i18n";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { safeAuthDestination } from "@/lib/auth-destination";
+import { getOAuthRedirectUri } from "@/lib/auth-redirect.mjs";
 
 export const Route = createFileRoute("/auth")({
   staticData: { sitemap: false },
@@ -41,12 +45,63 @@ function AuthPage() {
       : window.location.origin;
   }
 
+  function getNativeReturnUrl() {
+    return getOAuthRedirectUri({ native: true, origin: getReturnUrl() });
+  }
+
+  async function handleNativeOAuthCallback(url: string) {
+    const callback = new URL(url);
+    if (callback.protocol !== "com.thaikanya.icaretele:" || callback.host !== "auth" || callback.pathname !== "/callback") return;
+
+    const error = callback.searchParams.get("error_description") ?? callback.searchParams.get("error");
+    if (error) throw new Error(error);
+
+    const code = callback.searchParams.get("code");
+    if (code) {
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      if (exchangeError) throw exchangeError;
+    } else {
+      const hash = new URLSearchParams(callback.hash.replace(/^#/, ""));
+      const accessToken = hash.get("access_token");
+      const refreshToken = hash.get("refresh_token");
+      if (!accessToken || !refreshToken) throw new Error("OAuth callback did not include a session");
+      const { error: sessionError } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      if (sessionError) throw sessionError;
+    }
+
+    await Browser.close().catch(() => undefined);
+    goNext();
+  }
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) goNext();
     });
+
+    if (!Capacitor.isNativePlatform()) return;
+
+    let disposed = false;
+    let listener: { remove: () => Promise<void> } | undefined;
+    const attach = async () => {
+      listener = await App.addListener("appUrlOpen", ({ url }) => {
+        void handleNativeOAuthCallback(url).catch((error: unknown) => {
+          if (!disposed) toast.error(error instanceof Error ? error.message : t("common.error"));
+        });
+      });
+      const launchUrl = await App.getLaunchUrl();
+      if (launchUrl?.url && !disposed) {
+        await handleNativeOAuthCallback(launchUrl.url).catch((error: unknown) => {
+          if (!disposed) toast.error(error instanceof Error ? error.message : t("common.error"));
+        });
+      }
+    };
+    void attach();
+    return () => {
+      disposed = true;
+      void listener?.remove();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, next]);
+  }, [navigate, next, t]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,6 +132,22 @@ function AuthPage() {
   }
 
   async function handleGoogle() {
+    if (Capacitor.isNativePlatform()) {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: getNativeReturnUrl(),
+          skipBrowserRedirect: true,
+        },
+      });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data.url) await Browser.open({ url: data.url });
+      return;
+    }
+
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: getReturnUrl(),
     });

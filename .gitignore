@@ -36,3 +36,10 @@ supabase/.temp/
 *.njsproj
 *.sln
 *.sw?
+
+# Local build helpers and private signing material
+*-log*.txt
+*.bak-*
+*.jks
+*.keystore
+publish-patch/
